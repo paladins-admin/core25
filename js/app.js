@@ -114,7 +114,7 @@ if (form) {
 
         try {
             await emailjs.send(
-                "service_batwsje",
+                "service_ypst3h7",
                 "template_adfue9m",
                 templateParameters
             );
