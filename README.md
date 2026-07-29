@@ -11,4 +11,3 @@ Files:
 - js/app.js
 - assets/core25-logo.png
 
-The contact form is front-end ready. Connect it to EmailJS, Formspree or your preferred service before launch.
