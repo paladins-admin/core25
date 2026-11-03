@@ -43,3 +43,16 @@ html{scroll-behavior:auto}.story-visual{position:static!important}
 .outcome-art{position:absolute;width:260px;right:24px;bottom:30px;pointer-events:none}
 .cta-panel:has(.outcome-art) h2,.cta-panel:has(.outcome-art) p{max-width:72%}
 @media(max-width:760px){.outcome-art{position:relative;width:220px;right:auto;bottom:auto;margin:0 auto 28px}.cta-panel:has(.outcome-art) h2,.cta-panel:has(.outcome-art) p{max-width:100%}}
+
+/* Detailed 3D artwork is split into independent image fragments, then reassembled.
+   One shared source keeps every piece registered to the final high-resolution image. */
+.sculpture-scene{position:relative;width:100%;aspect-ratio:1;isolation:isolate}
+.sculpture-scene img{width:100%;height:100%;object-fit:contain;display:block}
+.story-resolved{position:relative;z-index:1}
+.story-fragment{position:absolute;inset:0;z-index:2;display:none!important;transform-origin:50% 50%}
+.is-animated .story-fragment{display:block!important}
+.is-animated .story-resolved{opacity:0}
+.story-aura{position:absolute;inset:15%;border-radius:50%;background:radial-gradient(ellipse,#f9a54a55,transparent 70%);filter:blur(20px);z-index:0;opacity:.7}
+.outcome-art img{border-radius:24px}
+@media(max-width:700px){.people-story.is-animated .sculpture-scene{height:calc(100% - 35px);width:auto;aspect-ratio:1;max-width:100%;flex-shrink:0}}
+@media(prefers-reduced-motion:reduce){.story-fragment{display:none!important}.story-resolved{opacity:1!important}}

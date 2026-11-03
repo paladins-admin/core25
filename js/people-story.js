@@ -1,47 +1,43 @@
-/* Anime.js scrubs a numeric playhead; SVG parts remain ordinary, editable markup.
-   Native interpolation also works if the CDN is unavailable. No scroll interception. */
+/* A single detailed image is fragmented, then precisely reassembled.
+   Anime.js controls the playhead; native interpolation handles CDN failure. */
 (() => {
   const story = document.querySelector(".people-story");
   if (!story) return;
-  const people = [...story.querySelectorAll("[data-person]")];
-  const platform = story.querySelector(".story-platform");
-  const glow = story.querySelector(".story-glow");
-  const core = story.querySelector(".story-core");
-  const connections = story.querySelector(".story-connections");
+  const fragments = [...story.querySelectorAll("[data-fragment]")];
+  const resolved = story.querySelector(".story-resolved");
+  const aura = story.querySelector(".story-aura");
   const progressBar = story.querySelector(".story-progress span");
   const caption = story.querySelector("[data-story-caption]");
   const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const playhead = { progress: 0 };
   const clamp = value => Math.max(0, Math.min(1, value));
   const smooth = value => { const t = clamp(value); return t * t * (3 - 2 * t); };
+  // Deliberately asymmetric opening: detached pieces at different depths and angles.
+  const offsets = [[-15,-12,18],[-4,-19,-23],[12,-14,15],[20,-4,-19],
+    [13,9,25],[19,17,-14],[6,20,21],[-8,15,-25],
+    [-17,19,13],[-20,3,-18],[-14,-5,27],[-19,-14,-16]];
   let timeline = null;
   let frame = 0;
   let lastCaption = "";
   function render() {
     const p = clamp(playhead.progress);
-    // Open the compressed organisation, then draw its parts into alignment.
-    const open = smooth(p / .38);
-    const join = smooth((p - .58) / .32);
-    const radius = 68 + 147 * open - 60 * join;
-    const scatter = open * (1 - join);
-    const tension = 1 - open;
-    people.forEach((person, i) => {
-      const angle = i * Math.PI / 3;
-      const x = 300 + Math.cos(angle) * radius;
-      const y = 280 + Math.sin(angle) * radius * .55;
-      const twist = (i % 2 ? 1 : -1) * (22 * tension + 12 * scatter);
-      person.setAttribute("transform", "translate(" + x + " " + y + ") rotate(" + twist + ")");
-      person.querySelector(".person-head").setAttribute("transform",
-        "translate(" + Math.cos(angle) * 19 * scatter + " " + (-42 * scatter) + ")");
-      person.querySelector(".person-body").setAttribute("transform",
-        "translate(0 " + (i % 2 ? 16 : -10) * scatter + ")");
-      person.querySelector(".person-arms").setAttribute("transform",
-        "translate(0 " + 28 * scatter + ") scale(" + (1 + .35 * scatter) + " 1)");
+    const open = smooth(p / .42);
+    const join = smooth((p - .55) / .36);
+    fragments.forEach((fragment, i) => {
+      const [sx, sy, rotation] = offsets[i];
+      const angle = (i / fragments.length) * Math.PI * 2 - Math.PI * .75;
+      const spreadX = Math.cos(angle) * 25;
+      const spreadY = Math.sin(angle) * 25;
+      const x = (sx * (1 - open) + spreadX * open) * (1 - join);
+      const y = (sy * (1 - open) + spreadY * open) * (1 - join);
+      const turn = rotation * (1 - .65 * open) * (1 - join);
+      const scale = 1 - .09 * (1 - join);
+      fragment.style.transform = "translate(" + x + "%," + y + "%) rotate(" + turn + "deg) scale(" + scale + ")";
+      // The intact image covers subpixel seams at the final position.
+      fragment.style.opacity = String(1 - smooth((join - .96) / .04));
     });
-    platform.setAttribute("transform", "translate(0 " + 22 * scatter + ")");
-    glow.setAttribute("opacity", String(.05 + .85 * join));
-    core.setAttribute("transform", "translate(0 " + (-48 * scatter) + ") rotate(" + 35 * tension + " 300 280)");
-    connections.setAttribute("opacity", String(.12 + .78 * join));
+    resolved.style.opacity = String(smooth((join - .82) / .18));
+    aura.style.opacity = String(.1 + .8 * join);
     progressBar.style.transform = "scaleX(" + p + ")";
     const text = p < .2 ? "Competing priorities. Shared potential."
       : p < .5 ? "Unpack the challenge."
@@ -65,7 +61,6 @@
     story.classList.toggle("is-animated", !motion.matches);
     update();
   }
-  // A pinned version prevents upstream updates changing the choreography.
   if (window.anime && typeof window.anime.createTimeline === "function") {
     try {
       timeline = window.anime.createTimeline({ autoplay: false })
