@@ -1,11 +1,24 @@
 /* Six native SVG bands: pile -> lift -> full-page dance -> ribbon wreath.
-   All motion is tied to scroll; no running timer, bitmap, canvas, or scroll interception. */
+   Assembly follows scroll; the completed seamless wreath rotates slowly in place. */
 (() => {
  const svg=document.querySelector(".page-ribbons");
  const story=document.querySelector(".people-story");
  if(!svg||!story)return;
  const paths=[...svg.querySelectorAll("[data-ribbon]")];
  const warmth=svg.querySelector(".ribbon-warmth");
+ // A single closed vector band replaces the separate ends at the finish.
+ const wreath=document.createElementNS("http://www.w3.org/2000/svg","path");
+ wreath.setAttribute("fill","url(#ribbon-teal)");
+ wreath.setAttribute("fill-rule","evenodd");
+ wreath.style.transformBox="fill-box";
+ wreath.style.transformOrigin="center";
+ warmth.parentNode.appendChild(wreath);
+ let spin=null;
+ if(typeof wreath.animate==="function"){
+  spin=wreath.animate([{transform:"rotate(0deg)"},{transform:"rotate(360deg)"}],
+   {duration:90000,iterations:Infinity,easing:"linear"});
+  spin.pause();
+ }
  const slots=[...document.querySelectorAll(".ribbon-slot")];
  const copyBlocks=[...document.querySelectorAll(".ribbon-copy")];
  const dock=slots[slots.length-1];
@@ -52,6 +65,25 @@ function ribbonShape(i,p,w,h,finishX,finishY) {
  return "M"+a.map(pt=>pt.join(",")).join(" L")+" L"+b.reverse().map(pt=>pt.join(",")).join(" L")+" Z";
 }
 
+
+function wreathShape(w,h,cx,cy){
+ const radius=Math.min(w*.23,h*.20,125),halfWidth=Math.min(13,radius*.12);
+ const outer=[],inner=[];
+ for(let k=0;k<=360;k++){
+  const angle=k*Math.PI/180;
+  const r=radius*(1+.10*Math.sin(3*angle));
+  const dr=radius*.30*Math.cos(3*angle);
+  const dx=dr*Math.cos(angle)-r*Math.sin(angle);
+  const dy=dr*Math.sin(angle)+r*Math.cos(angle);
+  const length=Math.hypot(dx,dy);
+  const band=halfWidth*(.86+.14*Math.cos(6*angle));
+  const x=cx+r*Math.cos(angle),y=cy+r*Math.sin(angle);
+  outer.push([(x-dy/length*band).toFixed(3),(y+dx/length*band).toFixed(3)]);
+  inner.push([(x+dy/length*band).toFixed(3),(y-dx/length*band).toFixed(3)]);
+ }
+ return "M"+outer.map(p=>p.join(",")).join(" L")+" Z M"+inner.reverse().map(p=>p.join(",")).join(" L")+" Z";
+}
+
  let timeline=null,frame=0,lastCaption="";
  function render(){
   const w=window.innerWidth,h=window.innerHeight,p=clamp(playhead.progress);
@@ -74,6 +106,16 @@ function ribbonShape(i,p,w,h,finishX,finishY) {
    path.setAttribute("transform","translate("+(cx-boxW*.5)+" "+(cy-boxH*.5)+")");
   });
   const settle=smooth((p-.72)/.27);
+  const complete=smooth((p-.94)/.05);
+  paths.forEach(path=>path.style.opacity=String(1-complete));
+  wreath.setAttribute("d",wreathShape(boxW,boxH,cx,cy));
+  wreath.style.opacity=String(complete);
+  const dockRect=dock.getBoundingClientRect();
+  const shouldSpin=complete>.001&&!motion.matches&&!document.hidden&&dockRect.top<h&&dockRect.bottom>0;
+  if(spin){
+   if(shouldSpin&&spin.playState!=="running")spin.play();
+   else if(!shouldSpin&&spin.playState==="running")spin.pause();
+  }
   warmth.setAttribute("cx",String(cx));
   warmth.setAttribute("cy",String(cy));
   warmth.setAttribute("r",String(Math.min(boxW*.45,180)));
@@ -108,6 +150,10 @@ function ribbonShape(i,p,w,h,finishX,finishY) {
   story.classList.toggle("is-animated",active);
   if(active)update();
   else{
+   if(spin)spin.pause();
+   wreath.setAttribute("d",wreathShape(1200,900,300,450));
+   wreath.style.opacity="1";
+   paths.forEach(path=>path.style.opacity="0");
    // Keep a quiet, static wreath in the original SVG coordinate system.
    svg.setAttribute("viewBox","0 0 1200 900");
    exclusionRects.forEach(rect=>rect.setAttribute("width","0"));
@@ -127,6 +173,7 @@ function ribbonShape(i,p,w,h,finishX,finishY) {
  window.addEventListener("resize",requestUpdate,{passive:true});
  window.addEventListener("pageshow",requestUpdate);
  motion.addEventListener("change",configure);
+ document.addEventListener("visibilitychange",()=>{if(document.hidden&&spin)spin.pause();else requestUpdate()});
  if(typeof ResizeObserver!=="undefined")new ResizeObserver(requestUpdate).observe(document.body);
  configure();
 })();
