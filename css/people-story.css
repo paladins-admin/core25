@@ -1,9 +1,16 @@
-/* Homepage scroll sculpture. Defaults remain readable without JavaScript. */
-.people-story{background:radial-gradient(ellipse at 85% 25%,#123543 0,transparent 55%),#06131b;color:#fff;position:relative}
-.story-grid{display:grid;grid-template-columns:1fr 1fr;column-gap:60px;position:relative}
-.story-visual{grid-column:2;grid-row:1 / span 4;align-self:start;padding-top:160px;pointer-events:none}
-.story-visual-inner{position:relative;width:100%;max-width:600px;margin:auto}
-.people-sculpture{width:100%;height:auto;display:block;overflow:visible}
+/* True vector ribbons occupy the page, without a bitmap or rectangular backdrop. */
+.ribbon-site{background:#06131b;color:#fff}
+.page-ribbons{position:absolute;top:100px;right:0;width:100%;height:800px;pointer-events:none;z-index:1;overflow:hidden}
+.ribbon-site.ribbons-active .page-ribbons{position:fixed;inset:0;width:100%;height:100%;overflow:hidden}
+.ribbon-site main{position:relative;isolation:isolate}
+.ribbon-site .site-header{z-index:100}
+.ribbon-site .people-story,.ribbon-site .section{background:transparent;color:#fff;position:relative}
+.ribbon-site .container{position:relative;z-index:2}
+.ribbon-site .footer{position:relative;z-index:3}
+.story-grid{display:grid;grid-template-columns:1fr 1fr;column-gap:60px}
+.story-visual{grid-column:2;grid-row:1 / span 4;align-self:start;padding-top:140px;pointer-events:none}
+.story-visual-inner{width:100%;max-width:600px;margin:auto}
+.story-stage{height:420px}
 .story-caption{display:flex;gap:10px;align-items:center;justify-content:center;font-size:.7rem;letter-spacing:.13em;text-transform:uppercase;color:#a6c5cd;margin:16px 0 22px}
 .story-dot{width:6px;height:6px;border-radius:50%;background:#f47a24;box-shadow:0 0 14px #f47a24;flex-shrink:0}
 .story-progress{height:1px;background:#ffffff20;margin:0 15%}
@@ -15,44 +22,37 @@
 .story-chapter .display span{color:#f6a15f}
 .story-chapter .lead{font-size:clamp(1rem,1.45vw,1.2rem);line-height:1.8;color:#b6c9d1}
 .story-chapter .actions{gap:10px}.story-chapter .btn{font-size:.85rem}
+.story-chapter .display,.story-chapter .lead,.ribbon-site .section h2,.ribbon-site .section .lead{text-shadow:0 2px 12px #06131b,0 0 30px #06131b}
 .story-scroll{display:inline-flex;align-items:center;gap:18px;margin-top:48px;color:#91aeb9;font-size:.76rem;text-decoration:none}
 .story-scroll span{color:#f6a15f;font-size:1.3rem}.story-scroll:hover{color:#fff}
 .story-scroll:focus-visible{outline:2px solid #f47a24;outline-offset:8px}
 .people-story.is-animated .story-visual{position:sticky;top:max(90px,calc(50svh - 260px));padding-top:0;margin-top:130px}
-.people-story.is-animated .story-chapter{min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
-.people-story.is-animated .story-chapter:last-child{min-height:115svh}
+.people-story.is-animated .story-chapter{min-height:85svh;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
+.people-story.is-animated .story-chapter:last-child{min-height:90svh}
+.ribbon-site .card,.ribbon-site .product{background:#0b1f2aeb;backdrop-filter:blur(8px)}
+.ribbon-site .cta-panel{background:linear-gradient(90deg,#0b1f2af0,#0b1f2a95);border:1px solid #ffffff18;box-shadow:none;min-height:380px}
+.outcome-art{position:absolute;width:260px;aspect-ratio:1;right:24px;top:50%;transform:translateY(-50%);pointer-events:none}
+.cta-panel:has(.outcome-art) h2,.cta-panel:has(.outcome-art) p{max-width:65%}
 @media(max-width:980px){.story-grid{column-gap:25px}.story-caption{font-size:.6rem;letter-spacing:.06em}.story-chapter .actions{justify-content:flex-start}.story-chapter h1{font-size:clamp(3rem,7vw,4.7rem)}}
 @media(max-width:700px){
-.story-grid{display:flex;flex-direction:column}.story-visual{order:0;padding-top:95px;width:min(100%,420px);margin:auto}
+.story-grid{display:flex;flex-direction:column}.story-visual{order:0;padding-top:95px;width:100%;margin:auto}
 .story-chapter{order:1;padding:44px 0}.story-chapter h1{font-size:clamp(2.7rem,10vw,4rem)}.story-chapter h2{font-size:clamp(2.35rem,9vw,3.5rem)}
 .story-caption{margin:0 0 14px}.story-scroll{margin-top:24px}
-.people-story.is-animated .story-visual{top:75px;margin:0 auto;height:35svh;min-height:170px;max-height:310px;z-index:2;background:radial-gradient(ellipse,#10303e 0,#06131b 75%);border-bottom:1px solid #ffffff0c}
-.people-story.is-animated .story-visual-inner{height:100%;display:flex;flex-direction:column;align-items:center}
-.people-story.is-animated .people-sculpture{height:calc(100% - 35px);width:auto;max-width:100%}
-.people-story.is-animated .story-progress{width:60%;margin:0}
-.people-story.is-animated .story-chapter{min-height:100svh;padding:calc(35svh + 70px) 0 60px}
-.people-story.is-animated #story-start{padding-top:120px}
-.people-story.is-animated .story-chapter:last-child{min-height:110svh}
-.story-chapter{scroll-margin-top:calc(35svh + 90px)}
+.people-story.is-animated .story-visual{position:relative;top:auto;margin:75px auto 0;height:25svh;padding:0}
+.story-stage{height:22svh}.story-progress{width:60%;margin:auto}
+.people-story.is-animated .story-chapter{min-height:80svh;padding:90px 0}
+.people-story.is-animated #story-start{padding-top:70px}
+.story-chapter{scroll-margin-top:90px}
+.outcome-art{position:relative;width:210px;right:auto;top:auto;transform:none;margin:0 auto 28px}
+.cta-panel:has(.outcome-art) h2,.cta-panel:has(.outcome-art) p{max-width:100%}
 }
 @media(prefers-reduced-motion:reduce){
-html{scroll-behavior:auto}.story-visual{position:static!important}
-.story-scroll{display:none}.reveal{opacity:1;transform:none;transition:none}
+html{scroll-behavior:auto}.story-scroll{display:none}.reveal{opacity:1;transform:none;transition:none}
+.story-visual{display:none}.story-grid{display:block}
+.ribbon-site .page-ribbons{position:absolute;top:80px;height:450px;opacity:.28}
+#story-start{padding-top:170px}
 }
 
-.outcome-art{position:absolute;width:260px;right:24px;bottom:30px;pointer-events:none}
-.cta-panel:has(.outcome-art) h2,.cta-panel:has(.outcome-art) p{max-width:72%}
-@media(max-width:760px){.outcome-art{position:relative;width:220px;right:auto;bottom:auto;margin:0 auto 28px}.cta-panel:has(.outcome-art) h2,.cta-panel:has(.outcome-art) p{max-width:100%}}
-
-/* Detailed 3D artwork is split into independent image fragments, then reassembled.
-   One shared source keeps every piece registered to the final high-resolution image. */
-.sculpture-scene{position:relative;width:100%;aspect-ratio:1;isolation:isolate}
-.sculpture-scene img{width:100%;height:100%;object-fit:contain;display:block}
-.story-resolved{position:relative;z-index:1}
-.story-fragment{position:absolute;inset:0;z-index:2;display:none!important;transform-origin:50% 50%}
-.is-animated .story-fragment{display:block!important}
-.is-animated .story-resolved{opacity:0}
-.story-aura{position:absolute;inset:15%;border-radius:50%;background:radial-gradient(ellipse,#f9a54a55,transparent 70%);filter:blur(20px);z-index:0;opacity:.7}
-.outcome-art img{border-radius:24px}
-@media(max-width:700px){.people-story.is-animated .sculpture-scene{height:calc(100% - 35px);width:auto;aspect-ratio:1;max-width:100%;flex-shrink:0}}
-@media(prefers-reduced-motion:reduce){.story-fragment{display:none!important}.story-resolved{opacity:1!important}}
+/* Leave the wreath's docking area transparent so the vector remains visible. */
+.ribbon-site .cta-panel{background:linear-gradient(90deg,#0b1f2af0 0%,#0b1f2ae0 50%,transparent 70%)}
+@media(max-width:700px){.ribbon-site .cta-panel{background:linear-gradient(0deg,#0b1f2af0 0%,#0b1f2ae0 55%,transparent 85%)}}

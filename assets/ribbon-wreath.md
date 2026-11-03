@@ -1,0 +1,5 @@
+# Vector ribbon wreath
+
+Original code-native SVG artwork. Six closed vector bands use teal, silver and amber gradients. No bitmap, embedded image, rectangular background or external image source. assets/ribbon-wreath.svg is the standalone static design; index.html contains the same inline SVG for animation. js/people-story.js generates each closed band from sampled centreline normals as it transitions from pile to flight to wreath. Motion spans the complete homepage and finishes at the closing invitation. Reduced-motion visitors get a static SVG wreath.
+
+Validation: finite closed paths sampled across 738 combinations of ribbon, viewport and scroll state. DOM harness checks cover whole-page movement, reversal and reduced-motion behaviour with native fallback and a timeline stub. Browser visual QA remains pending due to session runtime startup failure.
