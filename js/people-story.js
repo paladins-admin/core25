@@ -3,6 +3,7 @@
 (() => {
   const story = document.querySelector(".people-story");
   if (!story) return;
+  const sculpture = story.querySelector(".sculpture-scene");
   const fragments = [...story.querySelectorAll("[data-fragment]")];
   const resolved = story.querySelector(".story-resolved");
   const aura = story.querySelector(".story-aura");
@@ -21,6 +22,9 @@
   let lastCaption = "";
   function render() {
     const p = clamp(playhead.progress);
+    // Turn the whole sculpture slowly, keeping all fragments and the final image aligned.
+    // Reduced-motion visitors see the upright, fully assembled artwork.
+    sculpture.style.transform = motion.matches ? "none" : "rotate(" + (-18 + 36 * p) + "deg)";
     const open = smooth(p / .42);
     const join = smooth((p - .55) / .36);
     fragments.forEach((fragment, i) => {
