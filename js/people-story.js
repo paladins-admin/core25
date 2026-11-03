@@ -6,7 +6,16 @@
  if(!svg||!story)return;
  const paths=[...svg.querySelectorAll("[data-ribbon]")];
  const warmth=svg.querySelector(".ribbon-warmth");
- const dock=document.querySelector(".outcome-art");
+ const slots=[...document.querySelectorAll(".ribbon-slot")];
+ const copyBlocks=[...document.querySelectorAll(".ribbon-copy")];
+ const dock=slots[slots.length-1];
+ const mask=svg.querySelector("#ribbon-copy-mask");
+ const maskBase=svg.querySelector(".ribbon-mask-base");
+ const exclusions=svg.querySelector(".ribbon-copy-exclusions");
+ const exclusionRects=copyBlocks.map(()=>{
+  const rect=document.createElementNS("http://www.w3.org/2000/svg","rect");
+  exclusions.appendChild(rect);return rect;
+ });
  const bar=story.querySelector(".story-progress span");
  const caption=story.querySelector("[data-story-caption]");
  const motion=window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -21,8 +30,8 @@ function ribbonShape(i,p,w,h,finishX,finishY) {
  const points=[], widths=[];
  for(let k=0;k<=72;k++){
   const u=k/72;
-  const pileX=w*(mobile?.5:.70)+(u-.5)*Math.min(w*.48,335)+Math.sin(u*8+phase)*30;
-  const pileY=h*(mobile?.29:.65)+Math.sin(u*10+phase)*15+i*5;
+  const pileX=w*.5+(u-.5)*Math.min(w*.48,335)+Math.sin(u*8+phase)*30;
+  const pileY=h*.65+Math.sin(u*10+phase)*15+i*5;
   const danceX=w*.5+Math.sin(u*Math.PI*2+phase+p*5)*w*.34;
   const danceY=h*.48+Math.sin(u*Math.PI*3+phase-p*7)*h*.30;
   const angle=phase-.95+u*2.0+p*.6;
@@ -46,16 +55,38 @@ function ribbonShape(i,p,w,h,finishX,finishY) {
  let timeline=null,frame=0,lastCaption="";
  function render(){
   const w=window.innerWidth,h=window.innerHeight,p=clamp(playhead.progress);
-  const rect=dock.getBoundingClientRect();
-  const settle=smooth((p-.72)/.27);
-  const finishX=mix(w*(w<701?.5:.7),rect.left+rect.width/2,settle);
-  const finishY=mix(h*.5,Math.max(h*.23,Math.min(h*.77,rect.top+rect.height/2)),settle);
+  const rects=slots.map(slot=>slot.getBoundingClientRect());
+  const first=rects[0],last=rects[rects.length-1],screenY=h*.5;
+  let a=first,b=first,t=0;
+  if(screenY>=last.top+last.height/2){a=b=last}
+  else if(screenY<=first.top+first.height/2){a=b=first}
+  else for(let j=0;j<rects.length-1;j++){
+   const c1=rects[j].top+rects[j].height/2,c2=rects[j+1].top+rects[j+1].height/2;
+   if(screenY>=c1&&screenY<=c2){a=rects[j];b=rects[j+1];t=smooth((screenY-c1)/(c2-c1));break}
+  }
+  const cx=mix(a.left+a.width/2,b.left+b.width/2,t);
+  const cy=mix(a.top+a.height/2,b.top+b.height/2,t);
+  const boxW=Math.max(1,Math.min(a.width,b.width)-36);
+  const boxH=Math.max(1,Math.min(a.height,b.height));
   svg.setAttribute("viewBox","0 0 "+w+" "+h);
-  paths.forEach((path,i)=>path.setAttribute("d",ribbonShape(i,p,w,h,finishX,finishY)));
-  warmth.setAttribute("cx",String(finishX));
-  warmth.setAttribute("cy",String(finishY));
-  warmth.setAttribute("r",String(Math.min(w*.3,220)));
+  paths.forEach((path,i)=>{
+   path.setAttribute("d",ribbonShape(i,p,boxW,boxH,boxW*.5,boxH*.5));
+   path.setAttribute("transform","translate("+(cx-boxW*.5)+" "+(cy-boxH*.5)+")");
+  });
+  const settle=smooth((p-.72)/.27);
+  warmth.setAttribute("cx",String(cx));
+  warmth.setAttribute("cy",String(cy));
+  warmth.setAttribute("r",String(Math.min(boxW*.45,180)));
   warmth.setAttribute("opacity",String(.06+.94*settle));
+  // An explicit exclusion mask guarantees no vector or glow sits underneath copy,
+  // including during side changes, long text, zoom and responsive reflow.
+  mask.setAttribute("width",String(w));mask.setAttribute("height",String(h));
+  maskBase.setAttribute("width",String(w));maskBase.setAttribute("height",String(h));
+  copyBlocks.forEach((copy,i)=>{
+   const r=copy.getBoundingClientRect(),pad=24,node=exclusionRects[i];
+   node.setAttribute("x",String(r.left-pad));node.setAttribute("y",String(r.top-pad));
+   node.setAttribute("width",String(r.width+pad*2));node.setAttribute("height",String(r.height+pad*2));
+  });
   bar.style.transform="scaleX("+p+")";
   const text=p<.08?"A little tension. A lot of possibility.":p<.3?"Make space for new directions.":p<.72?"Ideas in motion. Connections taking shape.":"Everything comes together.";
   if(text!==lastCaption){caption.textContent=text;lastCaption=text}
@@ -79,8 +110,11 @@ function ribbonShape(i,p,w,h,finishX,finishY) {
   else{
    // Keep a quiet, static wreath in the original SVG coordinate system.
    svg.setAttribute("viewBox","0 0 1200 900");
-   paths.forEach((path,i)=>path.setAttribute("d",ribbonShape(i,1,1200,900,840,450)));
-   warmth.setAttribute("cx","840");warmth.setAttribute("cy","450");
+   exclusionRects.forEach(rect=>rect.setAttribute("width","0"));
+   mask.setAttribute("width","1200");mask.setAttribute("height","900");
+   maskBase.setAttribute("width","1200");maskBase.setAttribute("height","900");
+   paths.forEach((path,i)=>{path.removeAttribute("transform");path.setAttribute("d",ribbonShape(i,1,1200,900,300,450))});
+   warmth.setAttribute("cx","300");warmth.setAttribute("cy","450");
    warmth.setAttribute("r","180");warmth.setAttribute("opacity",".5");
    bar.style.transform="scaleX(1)";
    caption.textContent="Everything comes together.";
