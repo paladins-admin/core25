@@ -1,0 +1,7 @@
+# Connection ribbons v3
+
+Original artwork generated using the built-in image-generation tool for Core25. 1254 × 1254 PNG. Replaces the figurative image in the scroll element and closing invitation. The existing fragmentation animation and three content sections are retained.
+
+## Prompt
+
+Premium abstract conceptual 3D sculpture for a technology consulting website, a metaphor for complexity becoming clarity. Square composition. Six broad flowing satin ribbons in pale teal, icy silver and deep ocean teal gently weave together into one open circular knot, like a sophisticated continuous loop or loosely woven torus, with generous open space in its centre. A subtle warm amber-orange glow emerges from within the woven connection, a welcoming optimistic light, not a blazing orb. Organic rounded edges, graceful tension and release, refined studio product-render quality, detailed satin ceramic and frosted glass surfaces, soft reflections and subtle ambient occlusion. Freestanding abstract object only, fully visible with generous 15 percent margin on every side. Seamless very dark navy #06131b background, understated contact shadow. Calm, elegant, architectural, contemporary, positive, confident. Strictly no humans, no bodies, no faces, no hands, no statues, no humanoid shapes, no religious imagery, no literal people. No sharp shards, no spiky forms, no cubes, no text, no logos, no watermark. It should feel like an artful visual of connected ideas and shared direction, appropriate for a premium corporate website. High detail and crisp smooth contours.

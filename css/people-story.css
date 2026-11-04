@@ -1,0 +1,55 @@
+/* Alternating copy and artwork columns; SVG masking also protects copy during travel. */
+.ribbon-site{background:#06131b;color:#fff}
+.ribbon-site main{position:relative;isolation:isolate}
+.page-ribbons{position:absolute;top:120px;left:0;width:100%;height:700px;pointer-events:none;z-index:1;overflow:hidden}
+.ribbon-site.ribbons-active .page-ribbons{position:fixed;inset:0;width:100%;height:100%}
+.ribbon-site .people-story,.ribbon-site .section{background:transparent;color:#fff}
+.ribbon-site .container{position:relative;z-index:2}
+.ribbon-site .footer{position:relative;z-index:3}
+.story-grid{display:block}
+.story-visual[hidden]{display:none!important}
+.ribbon-panel{position:relative;min-height:100svh;padding:12svh 0;scroll-margin-top:100px}
+.story-chapter{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:9%;align-items:center}
+.ribbon-section-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:9%;align-items:center}
+.ribbon-copy{min-width:0;grid-row:1;position:relative}
+.ribbon-slot{grid-row:1;height:440px;min-width:0;pointer-events:none}
+[data-copy-side="right"]>.ribbon-copy,[data-copy-side="right"]>.ribbon-section-grid>.ribbon-copy{grid-column:2}
+[data-copy-side="right"]>.ribbon-slot,[data-copy-side="right"]>.ribbon-section-grid>.ribbon-slot{grid-column:1}
+[data-copy-side="left"]>.ribbon-copy,[data-copy-side="left"]>.ribbon-section-grid>.ribbon-copy{grid-column:1}
+[data-copy-side="left"]>.ribbon-slot,[data-copy-side="left"]>.ribbon-section-grid>.ribbon-slot{grid-column:2}
+#story-start{padding-top:150px}
+.story-chapter h1{font-size:clamp(3rem,5.8vw,5.7rem)}
+.story-chapter h2,.ribbon-site .section h2{font-size:clamp(2.4rem,4.2vw,4.3rem)}
+.story-chapter .display span{color:#f6a15f}
+.story-chapter .lead{font-size:1.12rem;line-height:1.8;color:#b6c9d1}
+.story-chapter .actions{gap:10px}.story-chapter .btn{font-size:.85rem}
+.story-scroll{display:inline-flex;align-items:center;gap:18px;margin-top:30px;color:#91aeb9;font-size:.76rem;text-decoration:none}
+.story-scroll span{color:#f6a15f;font-size:1.3rem}.story-scroll:hover{color:#fff}
+.story-scroll:focus-visible{outline:2px solid #f47a24;outline-offset:8px}
+.ribbon-copy>.container{width:100%;margin:0}
+.ribbon-copy .product-grid{display:block}
+.ribbon-copy .product-stack{margin-top:32px}
+.ribbon-copy .card-grid{grid-template-columns:1fr;gap:12px;margin-top:30px}
+.ribbon-copy .card{min-height:0;padding:24px;background:#0b1f2a}
+.ribbon-copy .card h3{margin:12px 0 8px}
+.ribbon-copy .product{grid-template-columns:60px minmax(0,1fr);gap:14px;background:#0b1f2a}
+.ribbon-copy .product-brand{width:60px;height:60px}
+.ribbon-copy .product-link{grid-column:2;justify-self:start}
+.ribbon-copy .cta-panel{background:transparent;box-shadow:none;border:0;padding:0;min-height:0;overflow:visible}
+.ribbon-copy .cta-panel h2,.ribbon-copy .cta-panel p{max-width:100%}
+@media(max-width:760px){
+.ribbon-panel{padding:70px 0;min-height:0}
+.story-chapter,.ribbon-section-grid{display:flex;flex-direction:column;gap:32px}
+.ribbon-slot{height:35svh;min-height:200px;max-height:330px;width:100%;flex-shrink:0}
+.ribbon-copy{width:100%}
+#story-start{padding-top:95px}
+.story-chapter h1{font-size:clamp(2.8rem,10vw,4.5rem)}
+.story-chapter h2,.ribbon-site .section h2{font-size:clamp(2.35rem,8vw,3.6rem)}
+.story-chapter .actions{justify-content:flex-start}
+}
+@media(prefers-reduced-motion:reduce){
+html{scroll-behavior:auto}.story-scroll{display:none}.reveal{opacity:1;transform:none;transition:none}
+.ribbon-site .page-ribbons{position:absolute;top:110px;height:650px}
+}
+
+@media(max-width:760px){.ribbon-site:not(.ribbons-active) .page-ribbons{top:95px;height:300px}}
